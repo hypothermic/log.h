@@ -72,7 +72,7 @@ static char *_format_time(struct tm *timestc, logstream_t *stream)
     char *buf;
     // TODO: check if asprintf is availible (GNU or BSD only??)
     // TODO: switch regexes by logtimeformat_t
-    asprintf(&buf, "%d:%d:%d", timestc->tm_hour, timestc->tm_min, timestc->tm_sec);
+    asprintf(&buf, "%02d:%02d:%02d", timestc->tm_hour, timestc->tm_min, timestc->tm_sec);
     return buf;
 }
 
@@ -80,7 +80,7 @@ static char *_format_date(struct tm *timestc, logstream_t *stream)
 {
     char *buf;
     // idem ^^
-    asprintf(&buf, "%d-%d-%d", timestc->tm_mday, timestc->tm_mon + 1, timestc->tm_year + 1900);
+    asprintf(&buf, "%02d-%02d-%02d", timestc->tm_mday, timestc->tm_mon + 1, timestc->tm_year + 1900);
     return buf;
 }
 
