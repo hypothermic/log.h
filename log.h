@@ -95,7 +95,10 @@ void log(logstream_t *stream, const char* msg, const char* caller_name)
         timeinfo = localtime(&rawtime);
 
         // TODO: implement frm_revert
-        fprintf(stream->def_stream ? stderr : stdout, "[%s %s] %s(): %s\n", _format_time(timeinfo, stream), _format_date(timeinfo, stream), caller_name, msg);
+        fprintf(stream->def_stream ? stderr : stdout, "[%s %s] %s(): %s\n", stream->frm_revert ? _format_date(timeinfo, stream) : _format_time(timeinfo, stream), 
+                                                                            stream->frm_revert ? _format_time(timeinfo, stream) : _format_date(timeinfo, stream), caller_name, msg);
+
+        //fprintf(stream->def_stream ? stderr : stdout, "[%s %s] %s(): %s\n", _format_time(timeinfo, stream), _format_date(timeinfo, stream), caller_name, msg);
     }
 }
 
