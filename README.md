@@ -1,7 +1,7 @@
 # log.h
 
 ```
-[20:41:32 14-11-2018] main(): Hello world!
+[14-11-2018 21:42:51] ./example.c:37 my_function(): Hello world!
 ```
 
 Every project needs a proper logging solution, but most don't come with simplicity.
