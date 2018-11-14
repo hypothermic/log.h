@@ -15,7 +15,7 @@
 
 #include <time.h>
 
-#define LIBLOGHT_VERSION ((int) 6)
+#define LIBLOGHT_VERSION ((int) 7)
 
 typedef enum 
 {
