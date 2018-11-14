@@ -30,4 +30,21 @@ int main()
 
     stream->muted = false;
     log(stream, "This does get logged because we unmuted the stream.");
+
+    // --- 3. Time and date position --- //
+
+    stream->frm_revert = true;
+    log(stream, "Time and date are reverted");
+
+    stream->frm_revert = false;
+    log(stream, "Time and date are normal");
+
+    // --- 4. Calling from other_function --- //
+
+    other_function(stream);
+}
+
+void other_function(logstream_t *stream)
+{
+    log(stream, "This is being logged from another function");
 }
