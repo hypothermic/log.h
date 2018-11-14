@@ -84,7 +84,7 @@ static char *_format_date(struct tm *timestc, logstream_t *stream)
     return buf;
 }
 
-void log(logstream_t *stream, const char* msg, const char* caller_name)
+void log(logstream_t *stream, const char* msg, const char* file_name, int line, const char* caller_name)
 {
     if (!stream->muted)
     {
@@ -94,15 +94,17 @@ void log(logstream_t *stream, const char* msg, const char* caller_name)
         time(&rawtime);
         timeinfo = localtime(&rawtime);
 
-        // TODO: implement frm_revert
-        fprintf(stream->def_stream ? stderr : stdout, "[%s %s] %s(): %s\n", stream->frm_revert ? _format_date(timeinfo, stream) : _format_time(timeinfo, stream), 
-                                                                            stream->frm_revert ? _format_time(timeinfo, stream) : _format_date(timeinfo, stream), caller_name, msg);
-
-        //fprintf(stream->def_stream ? stderr : stdout, "[%s %s] %s(): %s\n", _format_time(timeinfo, stream), _format_date(timeinfo, stream), caller_name, msg);
+        // TODO: seperator styles (" ", "-", "::") and ability to hide file name, line no, etc.
+        fprintf(stream->def_stream ? stderr : stdout, "[%s %s] %s:%d %s(): %s\n", stream->frm_revert ? _format_date(timeinfo, stream) : _format_time(timeinfo, stream), 
+                                                                                  stream->frm_revert ? _format_time(timeinfo, stream) : _format_date(timeinfo, stream),
+                                                                                  file_name,
+                                                                                  line,
+                                                                                  caller_name,
+                                                                                  msg);
     }
 }
 
-#define log(stream, msg) log(stream, msg,__func__)
+#define log(stream, msg) log(stream, msg, __FILE__, __LINE__, __func__)
 
 #pragma GCC diagnostic pop
 
