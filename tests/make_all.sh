@@ -4,7 +4,7 @@ printf "\nMaking all tests...\n"
 
 cd "$(dirname "$0")"
 
-gcc ./*.c -o a.out
+gcc ./*.c -o a.out -pthread
 
 ./a.out
 

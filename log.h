@@ -15,6 +15,8 @@
 
 #include <time.h>
 
+#include <pthread.h>
+
 #define LIBLOGHT_VERSION ((int) 7)
 
 typedef enum 
@@ -65,6 +67,15 @@ typedef struct _logstream_t
     logdefstream_t *def_stream;
 } logstream_t;
 
+static struct _log_args
+{
+    logstream_t *stream;
+    const char* msg;
+    const char* file_name;
+    int line; 
+    const char* caller_name;
+};
+
 #pragma GCC diagnostic ignored "-Wbuiltin-declaration-mismatch"
 
 static char *_format_time(struct tm *timestc, logstream_t *stream)
@@ -104,7 +115,30 @@ void log(logstream_t *stream, const char* msg, const char* file_name, int line, 
     }
 }
 
+static void *_log_asu(void *args)
+{
+    struct _log_args *wrapper = args;
+
+    log(wrapper->stream, wrapper->msg, wrapper->file_name, wrapper->line, wrapper->caller_name);
+}
+
 #define log(stream, msg) log(stream, msg, __FILE__, __LINE__, __func__)
+
+void loga(logstream_t *stream, const char* msg, const char* file_name, int line, const char* caller_name)
+{
+    pthread_t thread;
+    struct _log_args *args = (struct _log_args*)malloc(sizeof(struct _log_args));
+
+    args->stream = stream;
+    args->msg = msg;
+    args->file_name = file_name;
+    args->line = line;
+    args->caller_name = caller_name;
+    int res = pthread_create(&thread, NULL, _log_asu, &args);
+    printf("res=%d join=%d", res, pthread_join(thread, NULL));
+}
+
+#define loga(stream, msg) loga(stream, msg, __FILE__, __LINE__, __func__)
 
 #pragma GCC diagnostic pop
 

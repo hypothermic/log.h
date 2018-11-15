@@ -42,6 +42,9 @@ int main()
     // --- 4. Calling from other_function --- //
 
     other_function(stream);
+
+    // --- 5. Async logging --- //
+    loga(stream, "This message is being logged asynchronously");
 }
 
 void other_function(logstream_t *stream)
