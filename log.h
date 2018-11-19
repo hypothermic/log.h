@@ -17,7 +17,7 @@
 
 #include <pthread.h>
 
-#define LIBLOGHT_VERSION ((int) 7)
+#define LIBLOGHT_VERSION ((int) 8)
 
 typedef enum 
 {
