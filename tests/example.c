@@ -39,11 +39,44 @@ int main()
     stream->frm_revert = false;
     log(stream, "Time and date are normal");
 
-    // --- 4. Calling from other_function --- //
+    // --- 4. Time and date formats --- //
+
+    stream->time_format = TF_NONE;
+    log(stream, "No time stamp is shown");
+
+    stream->time_format = SS_MM_HH;
+    log(stream, "Time stamp is shown in SS_MM_HH");
+
+    stream->time_format = HH_MM_SS;
+    log(stream, "Time stamp is shown in HH_MM_SS");
+
+
+    stream->time_format = TF_NONE;
+    stream->date_format = DF_NONE;
+    log(stream, "No time or date stamp is shown");
+
+
+    stream->time_format = HH_MM_SS;
+    stream->date_format = DF_NONE;
+    log(stream, "No date stamp is shown");
+
+    stream->date_format = YYYY;
+    log(stream, "Date stamp is shown in YYYY");
+
+    stream->date_format = YYYY_MM;
+    log(stream, "Date stamp is shown in YYYY_MM");
+
+    stream->date_format = YYYY_MM_DD;
+    log(stream, "Date stamp is shown in YYYY_MM_DD");
+
+    stream->date_format = YYYY_DD_MM;
+    log(stream, "Date stamp is shown in YYYY_DD_MM");
+
+    // --- 5. Calling from other_function --- //
 
     other_function(stream);
 
-    // --- 5. Async logging --- //
+    // --- 6. Async logging --- //
     loga(stream, "This message is being logged asynchronously");
 }
 
