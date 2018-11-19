@@ -83,7 +83,17 @@ static char *_format_time(struct tm *timestc, logstream_t *stream)
     char *buf;
     // TODO: check if asprintf is availible (GNU or BSD only??)
     // TODO: switch regexes by logtimeformat_t
-    asprintf(&buf, "%02d:%02d:%02d", timestc->tm_hour, timestc->tm_min, timestc->tm_sec);
+    switch ((int) stream->time_format) {
+        case TF_NONE:
+            asprintf(&buf, "");
+            break;
+        case HH_MM_SS:
+            asprintf(&buf, "%02d:%02d:%02d", timestc->tm_hour, timestc->tm_min, timestc->tm_sec);
+            break;
+        case SS_MM_HH:
+            asprintf(&buf, "%02d:%02d:%02d", timestc->tm_sec, timestc->tm_min, timestc->tm_hour);
+            break;
+    }
     return buf;
 }
 
@@ -91,7 +101,32 @@ static char *_format_date(struct tm *timestc, logstream_t *stream)
 {
     char *buf;
     // idem ^^
-    asprintf(&buf, "%02d-%02d-%02d", timestc->tm_mday, timestc->tm_mon + 1, timestc->tm_year + 1900);
+    switch ((int) stream->date_format) {
+        case DF_NONE:
+            asprintf(&buf, "");
+            break;
+        case YYYY:
+            asprintf(&buf, "%02d", timestc->tm_year + 1900);
+            break;
+        case YYYY_MM:
+            asprintf(&buf, "%02d-%02d", timestc->tm_year + 1900, timestc->tm_mon + 1);
+            break;
+        case YYYY_MM_DD:
+            asprintf(&buf, "%02d-%02d-%02d", timestc->tm_year + 1900, timestc->tm_mon, timestc->tm_mday + 1);
+            break;
+        case YYYY_DD_MM:
+            asprintf(&buf, "%02d-%02d-%02d", timestc->tm_year + 1900, timestc->tm_mday + 1, timestc->tm_mon);
+            break;
+        case MM_YYYY:
+            asprintf(&buf, "%02d-%02d", timestc->tm_mon + 1, timestc->tm_year + 1900);
+            break;
+        case MM_DD_YYYY:
+            asprintf(&buf, "%02d-%02d-%02d", timestc->tm_mon, timestc->tm_mday + 1, timestc->tm_year + 1900);
+            break;
+        case DD_MM_YYYY:
+            asprintf(&buf, "%02d-%02d-%02d", timestc->tm_mday, timestc->tm_mon + 1, timestc->tm_year + 1900);
+            break;
+    }
     return buf;
 }
 
@@ -106,12 +141,13 @@ void log(logstream_t *stream, const char* msg, const char* file_name, int line, 
         timeinfo = localtime(&rawtime);
 
         // TODO: seperator styles (" ", "-", "::") and ability to hide file name, line no, etc.
-        fprintf(stream->def_stream ? stderr : stdout, "[%s %s] %s:%d %s(): %s\n", stream->frm_revert ? _format_date(timeinfo, stream) : _format_time(timeinfo, stream), 
-                                                                                  stream->frm_revert ? _format_time(timeinfo, stream) : _format_date(timeinfo, stream),
-                                                                                  file_name,
-                                                                                  line,
-                                                                                  caller_name,
-                                                                                  msg);
+        fprintf(stream->def_stream ? stderr : stdout, "[%s%s%s] %s:%d %s(): %s\n", stream->frm_revert ? _format_date(timeinfo, stream) : _format_time(timeinfo, stream), 
+                                                                                   stream->date_format != DF_NONE && stream->time_format != TF_NONE ? " " : "",
+                                                                                   stream->frm_revert ? _format_time(timeinfo, stream) : _format_date(timeinfo, stream),
+                                                                                   file_name,
+                                                                                   line,
+                                                                                   caller_name,
+                                                                                   msg);
     }
 }
 
@@ -146,8 +182,8 @@ logstream_t *log_stream_new()
 {
     logstream_t *res = (logstream_t*)malloc(sizeof(logstream_t));
     res->muted = false;
-    res->date_format = DF_NONE;
-    res->time_format = TF_NONE;
+    res->date_format = DD_MM_YYYY;
+    res->time_format = HH_MM_SS;
     res->def_stream = STDOUT;
     return res;
 }
